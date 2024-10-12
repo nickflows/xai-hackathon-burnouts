@@ -67,8 +67,8 @@ def get_last_n_tweets_from_accounts(accounts, n):
 def home():
     return render_template('xaiHackHome.html')
 
-@app.route('/demo1', methods=['GET', 'POST'])
-def demo1():
+@app.route('/lookup', methods=['GET', 'POST'])
+def lookup():
     if request.method == 'POST':
         try:
             accounts = request.form.get('accounts').split(',')
@@ -88,10 +88,10 @@ def demo1():
             
             return jsonify(dict(tweets_by_user))
         except Exception as e:
-            logging.error(f"Error in demo1 route: {str(e)}")
+            logging.error(f"Error in lookup route: {str(e)}")
             return jsonify({"error": str(e)}), 500
     
-    return render_template('template.html')
+    return render_template('lookup.html')
 
 @app.route('/singletweet', methods=['GET', 'POST'])
 def singletweet():
