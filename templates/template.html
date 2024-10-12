@@ -1,23 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitter Scraper</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../static/styles.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Twitter Scraper</h1>
-    <form method="POST">
-        <label for="accounts">Twitter Accounts (comma-separated):</label>
-        <input type="text" id="accounts" name="accounts" required><br><br>
-        <label for="days">Number of days to fetch:</label>
-        <input type="number" id="days" name="days" value="7" required><br><br>
-        <input type="submit" value="Fetch Tweets">
-    </form>
-    <div id="results"></div>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="mb-4">Grok Tweet Analysis</h1>
+        <form method="POST" class="mb-4">
+            <div class="mb-3">
+                <label for="accounts" class="form-label">Twitter Accounts (comma-separated):</label>
+                <input type="text" class="form-control" id="accounts" name="accounts" required>
+            </div>
+            <div class="mb-3">
+                <label for="days" class="form-label">Number of days to fetch:</label>
+                <input type="number" class="form-control" id="days" name="days" value="7" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Fetch Tweets</button>
+        </form>
+        <div id="results"></div>
+    </div>
 
-    <script>p
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
         document.querySelector('form').onsubmit = function(e) {
             e.preventDefault();
-            fetch('/', {
+            fetch('/demo1', {
                 method: 'POST',
                 body: new FormData(this)
             })
@@ -25,17 +39,40 @@
             .then(data => {
                 let resultsDiv = document.getElementById('results');
                 resultsDiv.innerHTML = '';
-                data.forEach(tweet => {
+                for (let username in data) {
                     resultsDiv.innerHTML += `
-                        <p><strong>User:</strong> ${tweet.username}</p>
-                        <p><strong>Date:</strong> ${tweet.created_at}</p>
-                        <p><strong>Tweet:</strong> ${tweet.text}</p>
-                        <hr>
+                        <h2 class="mt-4 mb-3">Tweets by ${username}</h2>
                     `;
-                });
+                    data[username].forEach(tweet => {
+                        resultsDiv.innerHTML += `
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <h5 class="card-title">${tweet.username}</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">${tweet.created_at}</h6>
+                                            <p class="card-text">${tweet.text}</p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">AI Analysis</h5>
+                                                    <p class="card-text">${tweet.ai_score}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = '<p class="text-danger">An error occurred while fetching tweets. Please try again.</p>';
             });
         };
     </script>
 </body>
 </html>
-

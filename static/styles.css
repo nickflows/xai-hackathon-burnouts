@@ -1,0 +1,83 @@
+/* styles.css */
+
+/* General body styling */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+/* Container styling */
+.container {
+    margin-top: 50px;
+}
+
+/* Form styling */
+form {
+    margin-bottom: 30px;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.form-control {
+    border-radius: 5px;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 5px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+/* Results styling */
+#results {
+    margin-top: 30px;
+}
+
+.card {
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.card-subtitle {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.card-text {
+    font-size: 1rem;
+}
+
+.card .card {
+    margin-top: 10px;
+}
+
+.card .card-body {
+    padding: 10px;
+}
+
+.card .card-title {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.card .card-text {
+    font-size: 1rem;
+    color: #6c757d;
+}
