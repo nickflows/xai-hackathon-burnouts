@@ -44,16 +44,12 @@ def get_last_n_tweets_for_account(account, n):
 
         if response.data:
             for tweet in response.data:
-                try:
-                    ai_analysis = judge_political_leaning(tweet.text)
-                    tweets.append({
-                        'username': account,
-                        'created_at': tweet.created_at,
-                        'text': tweet.text,
-                        'ai_score': ai_analysis
-                    })
-                except Exception as e:
-                    logging.error(f"Error analyzing tweet: {str(e)}")
+                tweets.append({
+                    'username': account,
+                    'created_at': tweet.created_at,
+                    'text': tweet.text,
+                    'id': tweet.id
+                })
     except Exception as e:
         logging.error(f"Error fetching tweets for {account}: {str(e)}")
     
@@ -83,7 +79,12 @@ def demo1():
             # Organize tweets by user
             tweets_by_user = defaultdict(list)
             for tweet in tweets:
-                tweets_by_user[tweet['username']].append(tweet)
+                tweets_by_user[tweet['username']].append({
+                    'username': tweet['username'],
+                    'created_at': tweet['created_at'].isoformat(),
+                    'text': tweet['text'],
+                    'id': tweet['id']
+                })
             
             return jsonify(dict(tweets_by_user))
         except Exception as e:
@@ -91,6 +92,35 @@ def demo1():
             return jsonify({"error": str(e)}), 500
     
     return render_template('template.html')
+
+@app.route('/singletweet', methods=['GET', 'POST'])
+def singletweet():
+    if request.method == 'POST':
+        try:
+            tweet_content = request.json.get('tweetContent')
+            if not tweet_content:
+                return jsonify({"error": "No tweet content provided"}), 400
+            
+            analysis = judge_political_leaning(tweet_content)
+            return jsonify({"analysis": analysis})
+        except Exception as e:
+            logging.error(f"Error in singletweet route: {str(e)}")
+            return jsonify({"error": str(e)}), 500
+    
+    return render_template('singletweet.html')
+
+@app.route('/analyze_tweet', methods=['POST'])
+def analyze_tweet():
+    try:
+        tweet_content = request.json.get('tweetContent')
+        if not tweet_content:
+            return jsonify({"error": "No tweet content provided"}), 400
+        
+        analysis = judge_political_leaning(tweet_content)
+        return jsonify({"analysis": analysis})
+    except Exception as e:
+        logging.error(f"Error in analyze_tweet route: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)

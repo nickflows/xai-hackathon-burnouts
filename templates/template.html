@@ -47,32 +47,58 @@
                         resultsDiv.innerHTML += `
                             <div class="card mb-3">
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-9">
-                                            <h5 class="card-title">${tweet.username}</h5>
-                                            <h6 class="card-subtitle mb-2 text-muted">${tweet.created_at}</h6>
-                                            <p class="card-text">${tweet.text}</p>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">AI Analysis</h5>
-                                                    <p class="card-text">${tweet.ai_score}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <h5 class="card-title">${tweet.username}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">${tweet.created_at}</h6>
+                                    <p class="card-text">${tweet.text}</p>
+                                    <button class="btn btn-primary analyze-btn" data-tweet-id="${tweet.id}">Analyze Tweet</button>
+                                    <div class="analysis-result mt-2" id="analysis-${tweet.id}"></div>
                                 </div>
                             </div>
                         `;
                     });
                 }
+                addAnalyzeButtonListeners();
             })
             .catch(error => {
                 console.error('Error:', error);
                 document.getElementById('results').innerHTML = '<p class="text-danger">An error occurred while fetching tweets. Please try again.</p>';
             });
         };
+
+        function addAnalyzeButtonListeners() {
+            document.querySelectorAll('.analyze-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tweetId = this.getAttribute('data-tweet-id');
+                    const tweetContent = this.parentElement.querySelector('.card-text').textContent;
+                    analyzeTweet(tweetId, tweetContent);
+                });
+            });
+        }
+
+        function analyzeTweet(tweetId, tweetContent) {
+            fetch('/analyze_tweet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ tweetContent: tweetContent })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById(`analysis-${tweetId}`).innerHTML = `
+                    <div class="card mt-2">
+                        <div class="card-body">
+                            <h5 class="card-title">AI Analysis</h5>
+                            <p class="card-text">${data.analysis}</p>
+                        </div>
+                    </div>
+                `;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById(`analysis-${tweetId}`).innerHTML = '<p class="text-danger">An error occurred during analysis. Please try again.</p>';
+            });
+        }
     </script>
 </body>
 </html>

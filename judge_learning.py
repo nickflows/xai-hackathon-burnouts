@@ -33,7 +33,7 @@ def judge_political_leaning(post_content):
                 "content": post_content
             }
         ],
-        "model": "grok-2-mini-public",
+        "model": "grok-preview",
         "stream": False,
         "temperature": 0
     }
