@@ -1,11 +1,16 @@
 import yaml
 import requests
 import json
+import logging
 
 def judge_political_leaning(post_content):
-    with open('/Users/nicholasflores/Documents/Secrets/xai.yaml', 'r') as file:
-        config = yaml.safe_load(file)
-        xai_api_key = config['xai']['bearer']
+    try:
+        with open('/Users/nicholasflores/Documents/Secrets/xai.yaml', 'r') as file:
+            config = yaml.safe_load(file)
+            xai_api_key = config['xai']['bearer']
+    except Exception as e:
+        logging.error(f"Error loading XAI API key: {str(e)}")
+        return "Error: Unable to load XAI API key"
 
     url = "https://api.x.ai/v1/chat/completions"
     headers = {
@@ -33,9 +38,11 @@ def judge_political_leaning(post_content):
         "temperature": 0
     }
 
-    response = requests.post(url, headers=headers, data=json.dumps(data))
-    if response.status_code == 200:
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        response.raise_for_status()  # This will raise an exception for HTTP errors
         result = response.json()
         return result['choices'][0]['message']['content']
-    else:
-        return f"Error: {response.status_code}, {response.text}"
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error calling XAI API: {str(e)}")
+        return f"Error: Unable to get analysis from XAI API"

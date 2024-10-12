@@ -1,6 +1,4 @@
 import tweepy
-import datetime
-from datetime import timedelta
 import yaml
 from flask import Flask, render_template, request, jsonify
 from collections import defaultdict
@@ -28,11 +26,8 @@ except Exception as e:
     logging.error(f"Error authenticating with Twitter: {str(e)}")
     raise
 
-# Define the accounts you want to pull tweets from
-accounts = ['nickflows', 'Andercot', '']  # Replace with Twitter handles
-
-# Function to pull tweets for a single account
-def get_tweets_for_account(account, since):
+# Function to pull the last n tweets for a single account
+def get_last_n_tweets_for_account(account, n):
     tweets = []
     
     try:
@@ -40,14 +35,10 @@ def get_tweets_for_account(account, since):
         user = client.get_user(username=account)
         user_id = user.data.id
 
-        # Format the start_time correctly
-        start_time = since.strftime('%Y-%m-%dT%H:%M:%SZ')
-
-        # Pull the tweets from that user within the specified time range
+        # Pull the last n tweets from that user
         response = client.get_users_tweets(
             id=user_id,
-            start_time=start_time,
-            max_results=100,
+            max_results=n,
             tweet_fields=['created_at', 'text']
         )
 
@@ -68,11 +59,11 @@ def get_tweets_for_account(account, since):
     
     return tweets
 
-# Function to pull tweets from multiple accounts
-def get_tweets_from_accounts(accounts, since):
+# Function to pull the last n tweets from multiple accounts
+def get_last_n_tweets_from_accounts(accounts, n):
     all_tweets = []
     for account in accounts:
-        tweets = get_tweets_for_account(account, since)
+        tweets = get_last_n_tweets_for_account(account, n)
         all_tweets.extend(tweets)
     return all_tweets
 
@@ -85,15 +76,9 @@ def demo1():
     if request.method == 'POST':
         try:
             accounts = request.form.get('accounts').split(',')
-            days = int(request.form.get('days', 7))
+            n_tweets = int(request.form.get('n_tweets', 10))  # Default to 10 tweets if not specified
             
-            today = datetime.datetime.utcnow()
-            since = today - timedelta(days=days)
-            
-            # Ensure we're not using a future date
-            since = min(since, today)
-            
-            tweets = get_tweets_from_accounts(accounts, since)
+            tweets = get_last_n_tweets_from_accounts(accounts, n_tweets)
             
             # Organize tweets by user
             tweets_by_user = defaultdict(list)
