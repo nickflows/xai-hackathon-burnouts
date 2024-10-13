@@ -6,6 +6,7 @@ from judge_learning import judge_political_leaning
 import logging
 from parse_response import parse_political_analysis
 from meme import MemeExplainer
+from parse_rating import parse_text
 
 app = Flask(__name__)
 
@@ -147,7 +148,15 @@ def analyze_meme():
         if not analysis:
             return jsonify({"error": "Failed to analyze the meme"}), 500
         
-        return jsonify({"analysis": analysis, "image": base64_image})
+        # Parse the rating from the analysis text
+        rating_text = parse_text(analysis)
+        rating = rating_text.split(':')[1].strip() if rating_text else None
+        
+        return jsonify({
+            "analysis": analysis,
+            "image": base64_image,
+            "rating": rating
+        })
     except Exception as e:
         logging.error(f"Error in analyze_meme route: {str(e)}")
         return jsonify({"error": str(e)}), 500
