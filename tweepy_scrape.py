@@ -150,12 +150,11 @@ def analyze_meme():
         
         # Parse the rating from the analysis text
         rating_text = parse_text(analysis)
-        rating = rating_text.split(':')[1].strip() if rating_text else None
         
         return jsonify({
             "analysis": analysis,
             "image": base64_image,
-            "rating": rating
+            "rating": rating_text  # Return the full rating text
         })
     except Exception as e:
         logging.error(f"Error in analyze_meme route: {str(e)}")
