@@ -70,7 +70,7 @@ class MemeExplainer(object):
                     },
                     {
                         "type": "text",
-                        "text": "Explain this meme. Then rate it on the following scale: {1: TOTALLY BASED, 2: BASED, 3: MID, 4: BIASED, 5: HELLA BIASED}",
+                        "text": "Explain this meme. Then rate it on the following scale: {5: TOTALLY BASED, 4: BASED, 3: MID, 2: BIASED, 1: HELLA BIASED}",
                     },
                 ],
             },
