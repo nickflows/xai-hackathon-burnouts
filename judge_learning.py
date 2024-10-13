@@ -25,8 +25,8 @@ def judge_political_leaning(post_content):
                 the political content of user-provided input. The two dimensions are:
                 (1) Left-Right and (2) Libertarian-Authoritarian.
                 Scores must range from 1 to 10. After generating the score,
-                please generate a query to be used via the X API that would return recent
-                relevant posts on the *opposite* end of the political spectrum."""
+                please generate a structures list of keywords to be used to query the X API
+                that would return recent relevant posts on the *opposite* end of the political spectrum."""
             },
             {
                 "role": "user",
