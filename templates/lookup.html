@@ -91,14 +91,39 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById(`analysis-${tweetId}`).innerHTML = `
-                    <div class="card mt-2">
-                        <div class="card-body">
-                            <h5 class="card-title">AI Analysis</h5>
-                            <p class="card-text">${data.analysis}</p>
+                const analysisDiv = document.getElementById(`analysis-${tweetId}`);
+                if (data.error) {
+                    analysisDiv.innerHTML = `<p class="text-danger">${data.error}</p>`;
+                } else {
+                    let analysis = data.analysis;
+                    analysisDiv.innerHTML = `
+                        <h5 class="mt-3">Political Analysis</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        Left-Right Dimension
+                                    </div>
+                                    <div class="card-body">
+                                        <h6 class="card-title">Score: ${analysis['Left-Right'].Score || 'N/A'}</h6>
+                                        <p class="card-text">${analysis['Left-Right'].Analysis || 'No analysis available.'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        Libertarian-Authoritarian Dimension
+                                    </div>
+                                    <div class="card-body">
+                                        <h6 class="card-title">Score: ${analysis['Libertarian-Authoritarian'].Score || 'N/A'}</h6>
+                                        <p class="card-text">${analysis['Libertarian-Authoritarian'].Analysis || 'No analysis available.'}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
