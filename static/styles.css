@@ -81,3 +81,11 @@ form {
     font-size: 1rem;
     color: #6c757d;
 }
+
+.analysis-text {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+}

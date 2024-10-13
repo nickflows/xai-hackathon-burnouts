@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, jsonify
 from collections import defaultdict
 from judge_learning import judge_political_leaning
 import logging
+from parse_response import parse_political_analysis
 
 app = Flask(__name__)
 
@@ -117,6 +118,7 @@ def analyze_tweet():
             return jsonify({"error": "No tweet content provided"}), 400
         
         analysis = judge_political_leaning(tweet_content)
+        
         return jsonify({"analysis": analysis})
     except Exception as e:
         logging.error(f"Error in analyze_tweet route: {str(e)}")
