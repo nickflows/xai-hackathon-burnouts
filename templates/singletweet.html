@@ -48,10 +48,29 @@
                 } else {
                     let analysis = data.analysis;
                     analysisResultDiv.innerHTML = `
-                        <h2 class="mt-4 mb-3">AI Analysis Result</h2>
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <p class="analysis-text">${analysis}</p>
+                        <h2 class="text-center mt-4 mb-3">Political Analysis</h2>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header">
+                                        Left-Right Dimension
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Score: ${analysis['Left-Right'].Score}</h5>
+                                        <p class="card-text">${analysis['Left-Right'].Analysis}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-header">
+                                        Libertarian-Authoritarian Dimension
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Score: ${analysis['Libertarian-Authoritarian'].Score}</h5>
+                                        <p class="card-text">${analysis['Libertarian-Authoritarian'].Analysis}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     `;

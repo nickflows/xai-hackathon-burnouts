@@ -110,6 +110,8 @@ def singletweet():
     
     return render_template('singletweet.html')
 
+from parse_response import parse_political_analysis
+
 @app.route('/analyze_tweet', methods=['POST'])
 def analyze_tweet():
     try:
@@ -117,9 +119,10 @@ def analyze_tweet():
         if not tweet_content:
             return jsonify({"error": "No tweet content provided"}), 400
         
-        analysis = judge_political_leaning(tweet_content)
+        analysis_text = judge_political_leaning(tweet_content)
+        parsed_analysis = parse_political_analysis(analysis_text)
         
-        return jsonify({"analysis": analysis})
+        return jsonify({"analysis": parsed_analysis})
     except Exception as e:
         logging.error(f"Error in analyze_tweet route: {str(e)}")
         return jsonify({"error": str(e)}), 500
