@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Meme Analysis</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../static/styles.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="mb-4">Twitter Meme Analysis</h1>
+        <form id="memeForm" class="mb-4">
+            <div class="mb-3">
+                <label for="twitterUrl" class="form-label">Twitter URL:</label>
+                <input type="text" class="form-control" id="twitterUrl" name="twitterUrl" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Analyze Meme</button>
+        </form>
+        <div id="results" class="row">
+            <div class="col-md-6">
+                <img id="memeImage" class="img-fluid mb-3" style="display: none;">
+            </div>
+            <div class="col-md-6">
+                <div id="analysisResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Button -->
+    <div class="fixed-top text-end p-3">
+        <a href="/" class="btn btn-primary">Home</a>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('memeForm').onsubmit = function(e) {
+            e.preventDefault();
+            const twitterUrl = document.getElementById('twitterUrl').value;
+            const tweetId = twitterUrl.split('/').pop();
+
+            fetch('/analyze_meme', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ tweetId: tweetId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let analysisResultDiv = document.getElementById('analysisResult');
+                let memeImage = document.getElementById('memeImage');
+                if (data.error) {
+                    analysisResultDiv.innerHTML = `<p class="text-danger">${data.error}</p>`;
+                    memeImage.style.display = 'none';
+                } else {
+                    analysisResultDiv.innerHTML = `<p>${data.analysis}</p>`;
+                    memeImage.src = `data:image/jpeg;base64,${data.image}`;
+                    memeImage.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('analysisResult').innerHTML = '<p class="text-danger">An error occurred during analysis. Please try again.</p>';
+                document.getElementById('memeImage').style.display = 'none';
+            });
+        };
+    </script>
+</body>
+</html>
