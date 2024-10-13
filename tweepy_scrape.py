@@ -5,6 +5,7 @@ from collections import defaultdict
 from judge_learning import judge_political_leaning
 import logging
 from parse_response import parse_political_analysis
+from meme import MemeExplainer
 
 app = Flask(__name__)
 
@@ -20,9 +21,11 @@ except Exception as e:
     logging.error(f"Error loading config: {str(e)}")
     raise
 
+meme_explainer = MemeExplainer(config)
+
 # Authenticate using the bearer token
 try:
-    client = tweepy.Client(bearer_token=bearer_token)
+    client = tweepy.Client(bearer_token=config['x']['bearer'])
 except Exception as e:
     logging.error(f"Error authenticating with Twitter: {str(e)}")
     raise
@@ -125,6 +128,28 @@ def analyze_tweet():
         return jsonify({"analysis": parsed_analysis})
     except Exception as e:
         logging.error(f"Error in analyze_tweet route: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/meme', methods=['GET'])
+def meme():
+    return render_template('meme.html')
+
+@app.route('/analyze_meme', methods=['POST'])
+def analyze_meme():
+    try:
+        tweet_id = request.json.get('tweetId')
+        if not tweet_id:
+            return jsonify({"error": "No tweet ID provided"}), 400
+        
+        # Use the MemeExplainer to analyze the meme
+        analysis, base64_image = meme_explainer.explain(tweet_id)
+        
+        if not analysis:
+            return jsonify({"error": "Failed to analyze the meme"}), 500
+        
+        return jsonify({"analysis": analysis, "image": base64_image})
+    except Exception as e:
+        logging.error(f"Error in analyze_meme route: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
